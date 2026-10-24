@@ -16,5 +16,6 @@ COPY static/ static/
 EXPOSE 8080
 
 # One worker keeps in-memory ADK sessions consistent; threads handle concurrency.
-# JSON form so gunicorn is PID 1 and receives Cloud Run's SIGTERM directly.
-CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "1", "--threads", "8", "--timeout", "120", "app:app"]
+# `exec` keeps gunicorn as PID 1 so it receives Cloud Run's SIGTERM directly, and
+# the shell expands ${PORT} to match whatever port the service is configured for.
+CMD ["sh", "-c", "exec gunicorn --bind 0.0.0.0:${PORT:-8080} --workers 1 --threads 8 --timeout 120 app:app"]
