@@ -1,0 +1,16 @@
+.git
+.gitignore
+.venv
+venv
+env
+__pycache__
+*.pyc
+*.pyo
+*.log
+.env
+.DS_Store
+.pytest_cache
+.mypy_cache
+scripts/
+README.md
+deploy-cloud-run.sh

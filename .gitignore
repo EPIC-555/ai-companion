@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+.Python
+build/
+dist/
+*.egg-info/
+
+# Secrets - never commit these
+.env
+.env.*
+gemini_key.txt
+api_key.txt
+project_id.txt
+service-account*.json
+*.pem
+
+# Tooling
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.DS_Store
+*.log
+*.sqlite3
