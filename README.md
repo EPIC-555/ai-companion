@@ -60,6 +60,34 @@ Two things worth knowing about this deployment:
   consistent, which also means a session is lost when an instance recycles. See
   "Make sessions durable" below to fix that.
 
+### Continuous deployment from GitHub
+
+Instead of running the script, you can have Cloud Run build and redeploy on every
+push to `main`. Setup is one-time and lives entirely in the Google Cloud console.
+
+1. Install the **Cloud Build** GitHub App on your account and grant it access to
+   this repository. Cloud Run cannot read your repo without it.
+2. In the console, go to **Cloud Run → Create service → Continuously deploy from a
+   repository**. Pick this repo and the `main` branch.
+3. For the build type choose **Dockerfile**. The path is `Dockerfile`, already in
+   the repo root.
+4. Set the **container port to 8080** — the Dockerfile binds that port, and it is
+   the console default.
+5. Under **Variables & Secrets**, add `GEMINI_API_KEY` from Secret Manager (create
+   the secret first), plus `COMPANION_MODEL=gemini-3.5-flash` if you want to pin a
+   model.
+6. Allow unauthenticated invocations for a public URL, then create the service.
+
+From then on, `git push origin main` triggers a rebuild and a zero-downtime
+rollout. The trigger runs as a Cloud Build service account, which needs the
+`roles/run.admin` and `roles/iam.serviceAccountUser` roles.
+
+One caveat: a deploy that breaks the app will roll out too. Cloud Run shifts
+traffic only after the new revision passes its startup health check, so a
+container that fails to boot will not take down the running version — but a
+container that boots and then errors will. Keep an eye on the revision list, and
+roll back by sending traffic to a previous revision.
+
 ## Where to take it next
 
 Roughly in order of effort. The first three are small and give the biggest payoff.
